@@ -19,7 +19,7 @@
     "ContactApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/customer",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
