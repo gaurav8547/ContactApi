@@ -29,6 +29,7 @@ namespace ContactApi
         {
             services.AddDbContext<ContactApiContext>(opt => { opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")); });
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddMvc();
             //services.AddSingleton(typeof(CustomerRepository), typeof(ICustomerRepository));
         }

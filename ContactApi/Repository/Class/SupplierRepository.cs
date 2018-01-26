@@ -20,8 +20,8 @@ namespace ContactApi.Repository.Class
         {
             try
             {
-                var customers = await context.Suppliers.ToListAsync();
-                return customers;
+                var suppliers = await context.Suppliers.ToListAsync();
+                return suppliers;
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
@@ -41,10 +41,10 @@ namespace ContactApi.Repository.Class
         public bool Remove(long id)
         {
             bool removed = false;
-            var customer = this.Find(id);
-            if (customer != null)
+            var supplier = this.Find(id);
+            if (supplier != null)
             {
-                var result = Task.Run(async () => await customer).Result;
+                var result = Task.Run(async () => await supplier).Result;
                 context.Suppliers.Remove(result);
                 context.SaveChanges();
                 removed = true;
@@ -63,12 +63,12 @@ namespace ContactApi.Repository.Class
             else
             {
                 //update
-                UpdateCustomer(supplier);
+                UpdateSupplier(supplier);
             }
             return await context.SaveChangesAsync();
         }
 
-        private void UpdateCustomer(Supplier supplier)
+        private void UpdateSupplier(Supplier supplier)
         {
             try
             {
@@ -99,7 +99,27 @@ namespace ContactApi.Repository.Class
 
         private void SaveSupplier(Supplier supplier)
         {
-            throw new NotImplementedException();
+            try
+            {
+                context.Suppliers.Add(supplier);
+            }
+            catch (NotSupportedException ex)
+            {
+                throw ex;
+            }
+            catch (ObjectDisposedException ex)
+            {
+                throw ex;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public void Dispose()
