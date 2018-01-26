@@ -37,7 +37,7 @@ namespace ContactApi.Controllers
             try
             {
                 await repo.Save(supplier);
-                return CreatedAtRoute("GetById", new { id = supplier.Id }, supplier);
+                return CreatedAtRoute("GetSupplierById", new { id = supplier.Id }, supplier);
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ namespace ContactApi.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet("{id}", Name = "GetSupplierById")]
         public async Task<IActionResult> Get(long id)
         {
             var supplier = await repo.Find(id);
