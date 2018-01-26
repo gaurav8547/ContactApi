@@ -59,7 +59,7 @@ namespace ContactApi.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet("{id}", Name = "GetSupplierById")]
         public async Task<IActionResult> Get(long id)
         {
             var supplier = await repo.Find(id);
