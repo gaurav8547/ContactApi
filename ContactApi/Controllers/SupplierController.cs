@@ -1,41 +1,43 @@
-﻿using ContactApi.Models;
-using ContactApi.Repository.Interface;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
+using ContactApi.Models;
+using ContactApi.Repository.Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ContactApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/customer/")]
-    public class CustomerController : Controller
+    [Route("api/Supplier")]
+    public class SupplierController : Controller
     {
-        ICustomerRepository repo;
-        public CustomerController(ICustomerRepository _repo)
+        ISupplierRepository repo;
+        public SupplierController(ISupplierRepository _repo)
         {
             repo = _repo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()      
+        public async Task<IActionResult> Get()
         {
-            var customers = await repo.All();
+            var suppliers = await repo.All();
 
-            if(customers == null)
+            if (suppliers == null)
             {
                 return NoContent();
             }
-            return Ok(customers);
+            return Ok(suppliers);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Customer customer)
+        public async Task<IActionResult> Post([FromBody] Supplier supplier)
         {
             try
             {
-                await repo.Save(customer);
-                return CreatedAtRoute("GetById", new { id = customer.Id }, customer);
+                await repo.Save(supplier);
+                return CreatedAtRoute("GetById", new { id = supplier.Id }, supplier);
             }
             catch (Exception ex)
             {
@@ -44,11 +46,11 @@ namespace ContactApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Customer customer)
+        public async Task<IActionResult> Put(int id, [FromBody] Supplier supplier)
         {
             try
             {
-                await repo.Save(customer);;
+                await repo.Save(supplier); ;
                 return NoContent();
             }
             catch (Exception ex)
@@ -57,15 +59,15 @@ namespace ContactApi.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetById")]        
+        [HttpGet("{id}", Name = "GetById")]
         public async Task<IActionResult> Get(long id)
         {
-            var customer = await repo.Find(id);
-            if(customer == null)
+            var supplier = await repo.Find(id);
+            if (supplier == null)
             {
                 return NotFound();
             }
-            return Ok(customer);
+            return Ok(supplier);
         }
 
         [HttpDelete]

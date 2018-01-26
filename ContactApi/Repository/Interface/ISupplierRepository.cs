@@ -2,18 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ContactApi.Repository.Interface
 {
-    public interface ICustomerRepository
+    public interface ISupplierRepository
     {
-        Task<List<Customer>> All();
+        Task<List<Supplier>> All();
 
-        Task<int> Save(Customer customer);
+        Task<int> Save(Supplier supplier);
 
-        Task<Customer> Find(long id);
+        Task<Supplier> Find(long id);
 
         bool Remove(long id);
     }

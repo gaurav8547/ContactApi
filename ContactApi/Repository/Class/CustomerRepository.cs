@@ -1,13 +1,15 @@
 ﻿using ContactApi.Models;
 using ContactApi.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace ContactApi.Repository.Class
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository : ICustomerRepository, IDisposable
     {
         ContactApiContext context;
 
@@ -16,11 +18,12 @@ namespace ContactApi.Repository.Class
             this.context = _context;
         }
 
-        public List<Customer> All()
+        public async Task<List<Customer>> All()
         {
             try
             {
-                return context.Customers.ToList();
+                var customers = await context.Customers.ToListAsync();
+                return customers;
             }
             catch(System.Data.SqlClient.SqlException ex)
             {
@@ -32,9 +35,9 @@ namespace ContactApi.Repository.Class
             }
         }
 
-        public Customer Find(long id)
+        public async Task<Customer> Find(long id)
         {
-            return context.Customers.Where(c => c.Id == id).FirstOrDefault();
+            return await context.Customers.FindAsync(id);
         }
 
         public bool Remove(long id)
@@ -43,7 +46,8 @@ namespace ContactApi.Repository.Class
             var customer = this.Find(id);
             if (customer != null)
             {
-                context.Customers.Remove(customer);
+                var result = Task.Run(async () => await customer).Result;
+                context.Customers.Remove(result);
                 context.SaveChanges();
                 removed = true;
             }
@@ -51,29 +55,32 @@ namespace ContactApi.Repository.Class
             return removed;
         }
 
-        public int Save(Customer customer)
+        public async Task<int> Save(Customer customer)
         {
-            int saved = 0;
             if(customer.Id == 0)
             {
                 //Save
-                saved = SaveCustomer(customer);
+                SaveCustomer(customer);
             }
             else
             {
                 //update
-                saved = UpdateCustomer(customer);
+                UpdateCustomer(customer);
             }
-            return saved;
+            return await context.SaveChangesAsync();
         }
 
-        private int UpdateCustomer(Customer customer)
+        private void UpdateCustomer(Customer customer)
         {
             try
             {
-                context.Customers.Add(customer);
-                context.Entry<Customer>(customer).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                return context.SaveChanges();
+                var _customer = Task.Run(async() => await Find(customer.Id)).Result;
+                _customer.FirstName = customer.FirstName ?? _customer.FirstName;
+                _customer.LastName = customer.LastName ?? _customer.LastName;
+                _customer.Email = customer.Email ?? _customer.Email;
+                _customer.BirthDay = customer.BirthDay ?? _customer.BirthDay;
+
+                context.Entry<Customer>(_customer).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             catch (NotSupportedException ex)
             {
@@ -93,12 +100,11 @@ namespace ContactApi.Repository.Class
             }
         }
 
-        private int SaveCustomer(Customer customer)
+        private void SaveCustomer(Customer customer)
         {
             try
             {
                 context.Customers.Add(customer);
-                return context.SaveChanges();
             }
             catch (NotSupportedException ex)
             {
@@ -116,6 +122,12 @@ namespace ContactApi.Repository.Class
             {
                 throw ex;
             }
+        }
+
+        public void Dispose()
+        {
+            if (this.context != null)
+                context.Dispose();
         }
     }
 }
