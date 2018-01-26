@@ -37,7 +37,7 @@ namespace ContactApi.Controllers
             try
             {
                 await repo.Save(supplier);
-                return CreatedAtRoute("GetById", new { id = supplier.Id }, supplier);
+                return CreatedAtRoute("GetSupplierById", new { id = supplier.Id }, supplier);
             }
             catch (Exception ex)
             {
