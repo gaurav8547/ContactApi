@@ -12,9 +12,9 @@ namespace ContactApi.Controllers
     public class CustomerController : Controller
     {
         ICustomerRepository repo;
-        public CustomerController(ICustomerRepository _repo)
+        public CustomerController(ICustomerRepository customerRepo)
         {
-            repo = _repo;
+            repo = customerRepo;
         }
 
         [HttpGet]
